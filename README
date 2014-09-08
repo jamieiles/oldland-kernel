@@ -1,0 +1,6 @@
+Oldland Kernel
+
+A simple ASM kernel to run on the Oldland CPU.  Currently implements a shell
+to allow user defined commands to be run.
+
+Licensed under GPLv2.
