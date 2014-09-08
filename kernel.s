@@ -203,29 +203,6 @@ print_newline:
 	pop	$lr
 	ret
 
-.macro SHELL_CMD	name, handler
-	.pushsection ".shellcmds"
-	.align	2
-	.long	\name
-	.long	\handler
-	.popsection
-.endm
-
-help_handler:
-	push	$lr
-
-	movhi	$r0, %hi(help_string)
-	orlo	$r0, $r0, %lo(help_string)
-	call	putstrn
-
-	pop	$lr
-	ret
-
-	.pushsection ".rodata"
-help_name:	.asciz "help"
-	.popsection
-SHELL_CMD	help_name, help_handler
-
 	.section ".data"
 cmd_buf:
 	.space	128
@@ -239,7 +216,5 @@ buildid_prefix:
 	.asciz "BuildID:\t"
 builddate_prefix:
 	.asciz "Build Date:\t"
-help_string:
-	.asciz "Valid commands:\nhelp"
 cmd_not_found_error:
 	.asciz "Invalid command"

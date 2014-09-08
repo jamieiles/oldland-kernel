@@ -47,13 +47,17 @@ put_u8:
 	movhi	$r3, %hi(hex_table)
 	orlo	$r3, $r3, %lo(hex_table)
 
-	add	$r4, $r3, $r1
-	ldr8	$r4, [$r4, 0]
+	push	$r0
+
+	add	$r0, $r3, $r1
+	ldr8	$r0, [$r0, 0]
 	call	putc
 
-	add	$r4, $r3, $r2
-	ldr8	$r4, [$r4, 0]
+	add	$r0, $r3, $r2
+	ldr8	$r0, [$r0, 0]
 	call	putc
+
+	pop	$r0
 
 	pop	$lr
 	pop	$r4
