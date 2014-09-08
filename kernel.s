@@ -68,6 +68,10 @@ run_shell:
 1:
 	call	print_prompt
 	call	read_command
+	push	$r0
+	call	print_newline
+	pop	$r0
+	call	run_command
 	b	1b
 	/* Never returns. */
 
@@ -99,11 +103,11 @@ next_char:
 	beq	delete_char
 
 	str8	$r0, [$r8, 0]
-	add	$r8, $r8, 1
-	add	$r7, $r7, 1
 
 	cmp	$r0, 0xd /* newline. */
 	beq	terminate
+	add	$r8, $r8, 1
+	add	$r7, $r7, 1
 
 	call	putc
 	b	next_char
@@ -140,6 +144,87 @@ delete_char:
 
 	b	next_char
 	
+run_command:
+	push	$lr
+	push	$r4
+	push	$r5
+
+	movhi	$r4, %hi(shell_cmds_start)
+	orlo	$r4, $r4, %lo(shell_cmds_start)
+	movhi	$r5, %hi(shell_cmds_end)
+	orlo	$r5, $r4, %lo(shell_cmds_end)
+
+1:
+	cmp	$r4, $r5
+	beq	cmd_not_found
+
+	push	$r0
+	and	$r1, $r0, $r0
+	ldr32	$r2, [$r4, 0]
+	call	strcmp
+	cmp	$r0, 0
+	beq	cmd_found
+	pop	$r0
+
+	/* string compare of commands. */
+	add	$r4, $r4, 8
+	b	1b
+
+cmd_not_found:
+	movhi	$r0, %hi(cmd_not_found_error)
+	orlo	$r0, $r0, %lo(cmd_not_found_error)
+	call	putstr
+	b	run_command_exit
+
+cmd_found:
+	pop	$r0
+	ldr32	$r4, [$r4, 0x4]
+	call	$r4
+
+run_command_exit:
+	pop	$r2
+	pop	$r1
+	pop	$lr
+	ret
+
+print_newline:
+	push	$lr
+	push	$r0
+
+	xor	$r0, $r0, $r0
+	add	$r0, $r0, 0xa
+	call	putc
+
+	xor	$r0, $r0, $r0
+	add	$r0, $r0, 0xd
+	call	putc
+
+	pop	$r0
+	pop	$lr
+	ret
+
+.macro SHELL_CMD	name, handler
+	.pushsection ".shellcmds"
+	.align	2
+	.long	\name
+	.long	\handler
+	.popsection
+.endm
+
+help_handler:
+	push	$lr
+
+	movhi	$r0, %hi(help_string)
+	orlo	$r0, $r0, %lo(help_string)
+	call	putstrn
+
+	pop	$lr
+	ret
+
+	.pushsection ".rodata"
+help_name:	.asciz "help"
+	.popsection
+SHELL_CMD	help_name, help_handler
 
 	.section ".data"
 cmd_buf:
@@ -154,3 +239,7 @@ buildid_prefix:
 	.asciz "BuildID:\t"
 builddate_prefix:
 	.asciz "Build Date:\t"
+help_string:
+	.asciz "Valid commands:\nhelp"
+cmd_not_found_error:
+	.asciz "Invalid command"

@@ -13,7 +13,7 @@ SECTIONS {
 		*.text.sdram;
 	} > sdram
 
-	.rodata : {
+	.rodata.sdram : {
 		*.rodata.sdram;
 	} > sdram
 
@@ -21,12 +21,18 @@ SECTIONS {
 		*.data;
 	} > sdram
 
+	.shellcmds : {
+		shell_cmds_start = . ;
+		*(.shellcmds);
+		shell_cmds_end = . ;
+	} > sdram
+
 	.text	: {
 		*.text;
 	} > rom
 
 	.rodata	: {
-		*.rodata;
+		*(.rodata);
 		. = ALIGN(4);
 	} > rom
 }
