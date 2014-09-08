@@ -6,7 +6,7 @@
 _start:
 	call	sdram_init
 	call	setup_stack
-	call	report_build
+	call	output_banner
 	call	run_shell
 
 setup_stack:
@@ -26,42 +26,15 @@ print_prompt:
 	pop	$lr
 	ret
 
-report_build:
+output_banner:
 	push	$lr
 
 	movhi	$r0, %hi(header)
 	orlo	$r0, $r0, %lo(header)
 	call	putstr
 
-	movhi	$r7, 0x1000
-	orlo	$r7, $r7, 0x0000
-
-	movhi	$r0, %hi(buildid_prefix)
-	orlo	$r0, $r0, %lo(buildid_prefix)
-	call	putstr
-	ldr32	$r0, [$r7, 0x4]
-	add	$r0, $r0, $r7
-	call	putstrn
-
-	movhi	$r0, %hi(builddate_prefix)
-	orlo	$r0, $r0, %lo(builddate_prefix)
-	call	putstr
-	ldr32	$r0, [$r7, 0x8]
-	add	$r0, $r0, $r7
-	call	putstrn
-
 	pop	$lr
 	ret
-
-	/*
-	 * Shell commands:
-	 *  - cpuid: dump cpuid registers
-	 *  - reset: jump to reset vector
-	 *  - irqs: list fired irqs
-	 *  - sdramtest: perform a short sdram test.
-	 */
-end:
-	b	end
 
 run_shell:
 	call	drain_uart_rx
@@ -173,7 +146,7 @@ run_command:
 cmd_not_found:
 	movhi	$r0, %hi(cmd_not_found_error)
 	orlo	$r0, $r0, %lo(cmd_not_found_error)
-	call	putstr
+	call	putstrn
 	b	run_command_exit
 
 cmd_found:
@@ -209,12 +182,8 @@ cmd_buf:
 
 	.section ".rodata"
 header:
-	.asciz "\nOldland CPU\n"
+	.asciz "\n\nOldland CPU Kernel\n\n"
 prompt:
-	.asciz "\noldland> "
-buildid_prefix:
-	.asciz "BuildID:\t"
-builddate_prefix:
-	.asciz "Build Date:\t"
+	.asciz "oldland> "
 cmd_not_found_error:
 	.asciz "Invalid command"
