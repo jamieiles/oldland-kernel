@@ -13,4 +13,5 @@ add_executable(kernel
 	       putu.s
 	       strcmp.s
 	       help.s
-	       buildid.s)
+	       buildid.s
+	       shell.s)
