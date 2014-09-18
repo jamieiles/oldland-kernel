@@ -14,4 +14,7 @@ add_executable(kernel
 	       strcmp.s
 	       help.s
 	       buildid.s
-	       shell.s)
+	       shell.s
+	       readmbr.s
+	       bzero.s
+	       memcpy.s)

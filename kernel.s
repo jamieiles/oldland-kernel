@@ -4,6 +4,10 @@
 	.section ".text"
 .globl _start
 _start:
+	movhi	$r0, %hi(ex_table)
+	orlo	$r0, $r0, %lo(ex_table)
+	scr	0, $r0
+
 	call	sdram_init
 	call	setup_stack
 	call	output_banner
@@ -26,6 +30,22 @@ output_banner:
 	pop	$lr
 	ret
 
-	.section ".rodata"
+	.pushsection ".rodata"
 header:
 	.asciz "\n\nOldland CPU Kernel\n\n"
+	.popsection
+
+	.balign	64
+ex_table:
+reset:
+	b	reset
+illegal_instr:
+	b	illegal_instr
+swi:
+	b	swi
+irq:
+	b	irq
+ifetch_abort:
+	b	ifetch_abort	
+data_abort:
+	b	data_abort

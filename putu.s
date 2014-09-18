@@ -33,6 +33,7 @@ put_u32:
 
 	ret
 
+.globl put_u8
 put_u8:
 	push	$r1
 	push	$r2
