@@ -1,7 +1,7 @@
-OUTPUT_FORMAT("elf32-oldland", "elf32-oldland",
-	      "elf32-oldland")
+OUTPUT_FORMAT("elf32-oldland")
 OUTPUT_ARCH(oldland)
 ENTRY(_start)
+GROUP(libgcc.a)
 
 MEMORY {
 	rom : ORIGIN = 0x00000000, LENGTH = 4K
@@ -11,6 +11,10 @@ MEMORY {
 SECTIONS {
 	.text.sdram : {
 		*.text.sdram;
+	} > sdram
+
+	.bss : {
+		*.bss;
 	} > sdram
 
 	.rodata.sdram : {
@@ -29,10 +33,11 @@ SECTIONS {
 
 	.text	: {
 		*.text;
-	} > rom
+	} > sdram
 
 	.rodata	: {
 		*(.rodata);
+		*(.rodata.*);
 		. = ALIGN(4);
-	} > rom
+	} > sdram
 }

@@ -10,8 +10,9 @@ _start:
 
 	call	sdram_init
 	call	setup_stack
-	call	output_banner
-	call	run_shell
+	call	root
+end:
+	b	end
 
 setup_stack:
 	/* Top of SRAM. */
@@ -20,20 +21,10 @@ setup_stack:
 
 	ret
 
-output_banner:
-	push	$lr
-
-	movhi	$r0, %hi(header)
-	orlo	$r0, $r0, %lo(header)
-	call	putstr
-
-	pop	$lr
-	ret
-
-	.pushsection ".rodata"
-header:
-	.asciz "\n\nOldland CPU Kernel\n\n"
-	.popsection
+__data_abort:
+	mov	$r0, $lr
+	gcr	$r1, 4
+	call	data_abort_handler
 
 	.balign	64
 ex_table:
@@ -48,4 +39,4 @@ irq:
 ifetch_abort:
 	b	ifetch_abort	
 data_abort:
-	b	data_abort
+	b	__data_abort

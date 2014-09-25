@@ -1,20 +1,22 @@
 cmake_minimum_required(VERSION 2.6)
-project(OldlandBootROM ASM)
+project(OldlandBootROM ASM C)
 
+set(CMAKE_SYSTEM_NAME none)
+set(CMAKE_SYSTEM_PROCESSOR oldland)
+set(CMAKE_C_COMPILER oldland-elf-gcc)
 set(CMAKE_ASM_COMPILER oldland-elf-as)
+
+set(CMAKE_C_FLAGS "-Wall -Werror -ffreestanding -O0 -ggdb3")
 set(CMAKE_ASM_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
-set(CMAKE_ASM_LINK_EXECUTABLE "oldland-elf-ld <OBJECTS> -T ${CMAKE_CURRENT_SOURCE_DIR}/link.x -o <TARGET> <CMAKE_ASM_LINK_FLAGS> <LINK_FLAGS>")
+
+SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "-nostdlib -T ${CMAKE_CURRENT_SOURCE_DIR}/link.x -Wl,-EL -lgcc")
 
 add_executable(kernel
-	       kernel.s
-	       uart.s
-	       string.s
+	       entry.s
 	       sdram.s
-	       putu.s
-	       strcmp.s
-	       help.s
-	       buildid.s
-	       shell.s
-	       readmbr.s
-	       bzero.s
-	       memcpy.s)
+	       kernel.c
+	       uart.c
+	       string.c
+	       shell.c
+	       printk.c
+	       buildid.c)
