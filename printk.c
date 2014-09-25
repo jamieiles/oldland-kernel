@@ -1,21 +1,8 @@
 #include <stddef.h>
 #include <stdarg.h>
 
+#include "common.h"
 #include "string.h"
-
-typedef unsigned int size_t;
-
-void *memcpy(void *dst, const void *src, size_t len)
-{
-	unsigned char *dst8 = dst;
-	const unsigned char *src8 = src;
-	size_t nbytes;
-
-	for (nbytes = 0; nbytes < len; ++nbytes)
-		*dst8++ = *src8++;
-
-	return dst;
-}
 
 struct string_specifier {
 	int precision;
@@ -29,7 +16,7 @@ struct string_formatter {
 	const char *fmt;
 	struct string_specifier specifier;
 };
-#include "uart.h"
+
 void output_char(struct string_formatter *formatter, int c)
 {
 	if (formatter->len < formatter->maxlen - 1) {

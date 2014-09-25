@@ -1,3 +1,4 @@
+#include "string.h"
 #include "uart.h"
 
 void putstr(const char *str)
@@ -23,4 +24,16 @@ int strcmp(const char *a, const char *b)
 	}
 
 	return *a - *b;
+}
+
+void *memcpy(void *dst, const void *src, size_t len)
+{
+	unsigned char *dst8 = dst;
+	const unsigned char *src8 = src;
+	size_t nbytes;
+
+	for (nbytes = 0; nbytes < len; ++nbytes)
+		*dst8++ = *src8++;
+
+	return dst;
 }
