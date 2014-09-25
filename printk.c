@@ -83,24 +83,24 @@ void output_pointer(struct string_formatter *formatter, const void *ptr)
 	}
 }
 
-void output_item(struct string_formatter *formatter, va_list ap)
+void output_item(struct string_formatter *formatter, va_list *ap)
 {
 	switch (*formatter->fmt) {
 	case 's':
-		output_string(formatter, va_arg(ap, const char *));
+		output_string(formatter, va_arg(*ap, const char *));
 		break;
 	case 'u':
-		output_unsigned(formatter, va_arg(ap, unsigned long), 10);
+		output_unsigned(formatter, va_arg(*ap, unsigned long), 10);
 		break;
 	case 'x':
-		output_unsigned(formatter, va_arg(ap, unsigned long), 16);
+		output_unsigned(formatter, va_arg(*ap, unsigned long), 16);
 		break;
 	case 'p':
-		output_pointer(formatter, va_arg(ap, const void *));
+		output_pointer(formatter, va_arg(*ap, const void *));
 		break;
 	case 'c':
 	default:
-		output_char(formatter, va_arg(ap, int));
+		output_char(formatter, va_arg(*ap, int));
 		break;
 	}
 
@@ -136,7 +136,7 @@ void parse_specifier(struct string_formatter *formatter)
 	read_precision(formatter);
 }
 
-size_t string_format(char *buf, size_t maxlen, const char *fmt, va_list ap)
+size_t string_format(char *buf, size_t maxlen, const char *fmt, va_list *ap)
 {
 	struct string_formatter formatter = {
 		.buf = buf,
@@ -165,7 +165,7 @@ void printk(const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	string_format(printk_buf, sizeof(printk_buf), fmt, ap);
+	string_format(printk_buf, sizeof(printk_buf), fmt, &ap);
 	va_end(ap);
 
 	putstr(printk_buf);
