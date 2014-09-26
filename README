@@ -1,6 +1,7 @@
 Oldland Kernel
 
-A simple ASM kernel to run on the Oldland CPU.  Currently implements a shell
-to allow user defined commands to be run.
+A simple C kernel to run on the Oldland CPU.  Currently implements a shell
+to allow user defined commands to be run and dumping the SD card partition
+table.
 
 Licensed under GPLv2.
