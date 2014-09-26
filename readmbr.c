@@ -255,16 +255,17 @@ static void sd_report_partitions(const unsigned char *mbr)
 	if (rc)
 		return;
 
+	printk("   Start      Size       Boot Type\n");
 	for (m = 0; m < 4; ++m) {
 		struct partition_entry pe;
 
 		memcpy(&pe, mbr + 0x1be + (m * sizeof(pe)), sizeof(pe));
 
-		if (pe.status == 0)
+		if (pe.type == 0)
 			continue;
 
-		printk("%u: 0x%08x %u %s\n", m, pe.first_lba, pe.num_sectors,
-		       pe.status ? "(boot)" : "");
+		printk("%u: 0x%08x 0x%08x %s  %02x\n", m, pe.first_lba, pe.num_sectors,
+		       pe.status ? " * " : "   ", pe.type);
 	}
 }
 
