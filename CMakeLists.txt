@@ -21,4 +21,5 @@ add_executable(kernel
 	       src/printk.c
 	       src/buildid.c
 	       src/readmbr.c
+	       src/cpuinfo.c
 	       src/reset.c)
