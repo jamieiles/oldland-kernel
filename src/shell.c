@@ -91,6 +91,6 @@ static void help_handler(const char *buf)
 	putstr("valid commands:\n");
 
 	for (sc = &shell_cmds_start; sc != &shell_cmds_end; ++sc)
-		printk("%s\n", sc->name);
+		printk("- %s\n", sc->name);
 }
 DEFINE_SHELL_COMMAND(help, help_handler);
