@@ -85,7 +85,7 @@ static void spi_do_command(const struct spi_cmd *cmd)
 		spi_cmd_buf[6 + m] = cmd->data[m];
 	/* Initialize receive buffer so we don't shift out new, garbage data. */
 	for (m = 6 + cmd->tx_datalen; m < cmdlen; ++m)
-		spi_cmd_buf[m] = 0;
+		spi_cmd_buf[m] = 0xff;
 
 	spi_write_reg(SPI_CS_ENABLE_REG, SD_CS);
 	spi_write_reg(SPI_XFER_CTRL_REG, XFER_START | cmdlen);
