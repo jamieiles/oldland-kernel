@@ -3,14 +3,12 @@
 #include "string.h"
 #include "printk.h"
 
-static unsigned long read_cpuid(int reg)
-{
-	unsigned long v;
-
-	asm volatile("cpuid	%0, %1" : "=r"(v) : "I"(reg));
-
-	return v;
-}
+#define read_cpuid(reg) \
+({ \
+	unsigned long v; \
+	asm volatile("cpuid	%0, %1" : "=r"(v) : "I"(reg)); \
+	v; \
+})
 
 static void report_version(unsigned long cpuid)
 {
