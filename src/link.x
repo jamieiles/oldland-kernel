@@ -3,41 +3,40 @@ OUTPUT_ARCH(oldland)
 ENTRY(_start)
 GROUP(libgcc.a)
 
-MEMORY {
-	rom : ORIGIN = 0x00000000, LENGTH = 4K
-	sdram : ORIGIN = 0x20000000, LENGTH = 32M
+PHDRS {
+	headers PT_PHDR FILEHDR PHDRS ;
+	text PT_LOAD ;
+	data PT_LOAD ;
 }
 
 SECTIONS {
-	.text.sdram : {
-		*.text.sdram;
-	} > sdram
-
-	.bss : {
-		*.bss;
-	} > sdram
-
-	.rodata.sdram : {
-		*.rodata.sdram;
-	} > sdram
-
-	.data : {
-		*.data;
-	} > sdram
-
-	.shellcmds : {
-		shell_cmds_start = . ;
-		*(.shellcmds);
-		shell_cmds_end = . ;
-	} > sdram
-
-	.text	: {
+	.text 0x20000000 : AT(0x20000000) {
 		*.text;
-	} > sdram
+	} :text
 
 	.rodata	: {
 		*(.rodata);
 		*(.rodata.*);
 		. = ALIGN(4);
-	} > sdram
+	} :data
+
+	.bss : {
+		*.bss;
+		*(COMMON);
+	}
+
+	.data : {
+		*.data;
+	}
+
+	.shellcmds : {
+		shell_cmds_start = . ;
+		*(.shellcmds);
+		shell_cmds_end = . ;
+	}
+
+	/DISCARD/ : {
+		*(.comment);
+		*(.debug*);
+	}
 }
